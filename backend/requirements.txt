@@ -1,0 +1,9 @@
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.13.5
+python-multipart==0.0.33
+python-dotenv==1.2.4
+Pillow==12.3.0
+google-genai==2.34.0
+google-auth==2.62.1
+requests==2.34.2

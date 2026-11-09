@@ -1,0 +1,475 @@
+{
+  "backend": {
+    "status": "ok",
+    "ocr_provider": "tesseract",
+    "ocr_configured": true,
+    "sheets_configured": true,
+    "handwriting_configured": true
+  },
+  "cases": [
+    {
+      "file": "printed_en.png",
+      "category": "Printed English route sheet",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 12,
+      "correct_fields": 11,
+      "incorrect_fields": 1,
+      "missing_fields": 0,
+      "field_accuracy": 0.9167,
+      "headings_exact": true,
+      "ocr_cer": 0.0087,
+      "flagged_fields": 1,
+      "warning_codes": [
+        "low_confidence",
+        "provider_notice"
+      ],
+      "server_duration_ms": 468,
+      "http_duration_ms": 471,
+      "actual_headings": [
+        "Vehicle",
+        "Driver",
+        "Destination",
+        "Delivery Time"
+      ],
+      "actual_records": [
+        [
+          "102",
+          "Daniel",
+          "Haifa",
+          "09:30"
+        ],
+        [
+          "205",
+          "Maya",
+          "Tel Aviv",
+          "11:15"
+        ],
+        [
+          "318",
+          "Ron",
+          "Kiryat Snmona",
+          "13:00"
+        ]
+      ],
+      "actual_raw_text": "Vehicle  Driver  Destination  Delivery Time\n102  Daniel  Haifa  09:30\n205  Maya  Tel Aviv  11:15\n318  Ron  Kiryat Snmona  13:00"
+    },
+    {
+      "file": "printed_he.png",
+      "category": "Printed Hebrew route sheet",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 12,
+      "correct_fields": 12,
+      "incorrect_fields": 0,
+      "missing_fields": 0,
+      "field_accuracy": 1.0,
+      "headings_exact": true,
+      "ocr_cer": 0.0,
+      "flagged_fields": 0,
+      "warning_codes": [
+        "provider_notice"
+      ],
+      "server_duration_ms": 503,
+      "http_duration_ms": 507,
+      "actual_headings": [
+        "רכב",
+        "נהג",
+        "יעד",
+        "שעת מסירה"
+      ],
+      "actual_records": [
+        [
+          "102",
+          "דניאל",
+          "חיפה",
+          "09:30"
+        ],
+        [
+          "205",
+          "מאיה",
+          "תל אביב",
+          "11:15"
+        ],
+        [
+          "318",
+          "רון",
+          "קריית שמונה",
+          "13:00"
+        ]
+      ],
+      "actual_raw_text": "רכב  נהג  יעד  שעת מסירה\n102  דניאל  חיפה  09:30\n205  מאיה  תל אביב  11:15\n318  רון  קריית שמונה  13:00"
+    },
+    {
+      "file": "printed_bilingual.png",
+      "category": "Bilingual printed route sheet",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 12,
+      "correct_fields": 9,
+      "incorrect_fields": 3,
+      "missing_fields": 0,
+      "field_accuracy": 0.75,
+      "headings_exact": true,
+      "ocr_cer": 0.0265,
+      "flagged_fields": 1,
+      "warning_codes": [
+        "low_confidence",
+        "provider_notice"
+      ],
+      "server_duration_ms": 525,
+      "http_duration_ms": 528,
+      "actual_headings": [
+        "Vehicle",
+        "Driver",
+        "Destination",
+        "Delivery Time"
+      ],
+      "actual_records": [
+        [
+          "12",
+          "דניאל",
+          "Haifa",
+          "09:30"
+        ],
+        [
+          "BO7",
+          "Maya",
+          "תל אביב",
+          "11:15"
+        ],
+        [
+          "C18",
+          "רון",
+          "Kiryat Snmona",
+          "13:00"
+        ]
+      ],
+      "actual_raw_text": "Vehicle  Driver  Destination  Delivery Time\n12  דניאל  Haifa  09:30\nBO7  Maya  תל אביב  11:15\nC18  רון  Kiryat Snmona  13:00"
+    },
+    {
+      "file": "handwritten_en.png",
+      "category": "English cursive on paper, archival excerpt",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 1,
+      "matched_rows": 0,
+      "record_recall": 0.0,
+      "unexpected_rows": 1,
+      "expected_fields": 3,
+      "correct_fields": 0,
+      "incorrect_fields": 0,
+      "missing_fields": 3,
+      "field_accuracy": 0.0,
+      "headings_exact": true,
+      "ocr_cer": 0.9231,
+      "flagged_fields": 1,
+      "warning_codes": [
+        "headings_inferred",
+        "low_confidence",
+        "provider_notice"
+      ],
+      "server_duration_ms": 265,
+      "http_duration_ms": 269,
+      "actual_headings": [
+        "Text"
+      ],
+      "actual_records": [
+        [
+          "% eT Se"
+        ]
+      ],
+      "actual_raw_text": "% eT Se"
+    },
+    {
+      "file": "handwritten_he.png",
+      "category": "Modern Hebrew ink on paper, HHD_age excerpt",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 1,
+      "extracted_rows": 1,
+      "matched_rows": 0,
+      "record_recall": 0.0,
+      "unexpected_rows": 1,
+      "expected_fields": 1,
+      "correct_fields": 0,
+      "incorrect_fields": 0,
+      "missing_fields": 1,
+      "field_accuracy": 0.0,
+      "headings_exact": true,
+      "ocr_cer": 0.7377,
+      "flagged_fields": 1,
+      "warning_codes": [
+        "headings_inferred",
+        "low_confidence",
+        "provider_notice"
+      ],
+      "server_duration_ms": 515,
+      "http_duration_ms": 520,
+      "actual_headings": [
+        "טקסט"
+      ],
+      "actual_records": [
+        [
+          "ו  כבי  rel 5  | ררך  ו  ANC  >( ור  IO ר |שר  a)  כו' ']ר%ב'ו"
+        ]
+      ],
+      "actual_raw_text": "ו  כבי  rel 5  | ררך  ו  ANC  >( ור  IO ר |שר  a)  כו' ']ר%ב'ו"
+    },
+    {
+      "file": "mixed_ink.png",
+      "category": "Printed English and scanned handwritten Hebrew composite",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 2,
+      "extracted_rows": 2,
+      "matched_rows": 1,
+      "record_recall": 0.5,
+      "unexpected_rows": 1,
+      "expected_fields": 4,
+      "correct_fields": 2,
+      "incorrect_fields": 0,
+      "missing_fields": 2,
+      "field_accuracy": 0.5,
+      "headings_exact": true,
+      "ocr_cer": 0.5909,
+      "flagged_fields": 2,
+      "warning_codes": [
+        "missing_value",
+        "provider_notice",
+        "unparsed_row"
+      ],
+      "server_duration_ms": 649,
+      "http_duration_ms": 654,
+      "actual_headings": [
+        "Item",
+        "Notes"
+      ],
+      "actual_records": [
+        [
+          "101",
+          "Checked"
+        ],
+        [
+          null,
+          null
+        ]
+      ],
+      "actual_raw_text": "Item  Notes\n101  Checked\n102  yataP a5  if  ב ר וש  MOON AIC aed  oho יבכ 54רן + ed ו ="
+    },
+    {
+      "file": "low_light_blur.png",
+      "category": "Simulated underexposure and blur",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 4,
+      "matched_rows": 2,
+      "record_recall": 0.6667,
+      "unexpected_rows": 2,
+      "expected_fields": 12,
+      "correct_fields": 2,
+      "incorrect_fields": 6,
+      "missing_fields": 4,
+      "field_accuracy": 0.1667,
+      "headings_exact": false,
+      "ocr_cer": 0.4522,
+      "flagged_fields": 11,
+      "warning_codes": [
+        "dark_image",
+        "headings_inferred",
+        "low_confidence",
+        "low_detail",
+        "missing_value",
+        "provider_notice"
+      ],
+      "server_duration_ms": 1034,
+      "http_duration_ms": 1040,
+      "actual_headings": [
+        "Column 1",
+        "Column 2",
+        "Column 3",
+        "Column 4"
+      ],
+      "actual_records": [
+        [
+          "Verte",
+          "סח",
+          "Destination",
+          "Ocetvery Time"
+        ],
+        [
+          "102",
+          "Cer",
+          "ate",
+          "ow"
+        ],
+        [
+          "205",
+          "Maye",
+          "Te Aue",
+          "וו"
+        ],
+        [
+          null,
+          "Ror",
+          "furyet Srrrore",
+          "1300"
+        ]
+      ],
+      "actual_raw_text": "Verte  סח  Destination  Ocetvery Time\n102  Cer  ate  ow\n205  Maye  Te Aue  וו\nRor  furyet Srrrore  1300"
+    },
+    {
+      "file": "slight_rotation.png",
+      "category": "Simulated 3° camera tilt",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 12,
+      "correct_fields": 12,
+      "incorrect_fields": 0,
+      "missing_fields": 0,
+      "field_accuracy": 1.0,
+      "headings_exact": true,
+      "ocr_cer": 0.0,
+      "flagged_fields": 1,
+      "warning_codes": [
+        "low_confidence",
+        "provider_notice"
+      ],
+      "server_duration_ms": 502,
+      "http_duration_ms": 507,
+      "actual_headings": [
+        "Vehicle",
+        "Driver",
+        "Destination",
+        "Delivery Time"
+      ],
+      "actual_records": [
+        [
+          "102",
+          "Daniel",
+          "Haifa",
+          "09:30"
+        ],
+        [
+          "205",
+          "Maya",
+          "Tel Aviv",
+          "11:15"
+        ],
+        [
+          "318",
+          "Ron",
+          "Kiryat Shmona",
+          "13:00"
+        ]
+      ],
+      "actual_raw_text": "Vehicle  Driver  Destination  Delivery Time\n102  Daniel  Haifa  09:30\n205  Maya  Tel Aviv  11:15\n318  Ron  Kiryat Shmona  13:00"
+    },
+    {
+      "file": "unlabeled_inventory.png",
+      "category": "Borderless checklist, missing header and middle cell",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "tesseract/eng+heb",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 9,
+      "correct_fields": 8,
+      "incorrect_fields": 0,
+      "missing_fields": 1,
+      "field_accuracy": 0.8889,
+      "headings_exact": true,
+      "ocr_cer": 0.0333,
+      "flagged_fields": 2,
+      "warning_codes": [
+        "headings_inferred",
+        "missing_value",
+        "provider_notice"
+      ],
+      "server_duration_ms": 279,
+      "http_duration_ms": 284,
+      "actual_headings": [
+        "Column 1",
+        "Column 2",
+        "Column 3"
+      ],
+      "actual_records": [
+        [
+          "Torque wrench",
+          null,
+          "Ready"
+        ],
+        [
+          "Radio",
+          null,
+          "Needs test"
+        ],
+        [
+          "First aid kit",
+          "1",
+          "Ready"
+        ]
+      ],
+      "actual_raw_text": "Torque wrench  Ready\nRadio  Needs test\nFirst aid kit  1  Ready"
+    },
+    {
+      "file": "blank.png",
+      "category": "Blank image, expected rejection",
+      "http_status": 422,
+      "error_code": "blank_image",
+      "provider": null,
+      "expected_rows": 0,
+      "extracted_rows": 0,
+      "matched_rows": 0,
+      "record_recall": null,
+      "unexpected_rows": 0,
+      "expected_fields": 0,
+      "correct_fields": 0,
+      "incorrect_fields": 0,
+      "missing_fields": 0,
+      "field_accuracy": null,
+      "headings_exact": null,
+      "ocr_cer": null,
+      "flagged_fields": 0,
+      "warning_codes": [],
+      "server_duration_ms": null,
+      "http_duration_ms": 7,
+      "actual_headings": null,
+      "actual_records": [],
+      "actual_raw_text": null
+    }
+  ]
+}

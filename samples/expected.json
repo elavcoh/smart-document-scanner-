@@ -1,0 +1,261 @@
+[
+  {
+    "file": "printed_en.png",
+    "category": "Printed English route sheet",
+    "headings": [
+      "Vehicle",
+      "Driver",
+      "Destination",
+      "Delivery Time"
+    ],
+    "rows": [
+      [
+        "102",
+        "Daniel",
+        "Haifa",
+        "09:30"
+      ],
+      [
+        "205",
+        "Maya",
+        "Tel Aviv",
+        "11:15"
+      ],
+      [
+        "318",
+        "Ron",
+        "Kiryat Shmona",
+        "13:00"
+      ]
+    ],
+    "raw_text": "Vehicle Driver Destination Delivery Time\n102 Daniel Haifa 09:30\n205 Maya Tel Aviv 11:15\n318 Ron Kiryat Shmona 13:00",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "printed_he.png",
+    "category": "Printed Hebrew route sheet",
+    "headings": [
+      "רכב",
+      "נהג",
+      "יעד",
+      "שעת מסירה"
+    ],
+    "rows": [
+      [
+        "102",
+        "דניאל",
+        "חיפה",
+        "09:30"
+      ],
+      [
+        "205",
+        "מאיה",
+        "תל אביב",
+        "11:15"
+      ],
+      [
+        "318",
+        "רון",
+        "קריית שמונה",
+        "13:00"
+      ]
+    ],
+    "raw_text": "רכב נהג יעד שעת מסירה\n102 דניאל חיפה 09:30\n205 מאיה תל אביב 11:15\n318 רון קריית שמונה 13:00",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "printed_bilingual.png",
+    "category": "Bilingual printed route sheet",
+    "headings": [
+      "Vehicle",
+      "Driver",
+      "Destination",
+      "Delivery Time"
+    ],
+    "rows": [
+      [
+        "A12",
+        "דניאל",
+        "Haifa",
+        "09:30"
+      ],
+      [
+        "B07",
+        "Maya",
+        "תל אביב",
+        "11:15"
+      ],
+      [
+        "C18",
+        "רון",
+        "Kiryat Shmona",
+        "13:00"
+      ]
+    ],
+    "raw_text": "Vehicle Driver Destination Delivery Time\nA12 דניאל Haifa 09:30\nB07 Maya תל אביב 11:15\nC18 רון Kiryat Shmona 13:00",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "handwritten_en.png",
+    "category": "English cursive on paper, archival excerpt",
+    "headings": [
+      "Text"
+    ],
+    "rows": [
+      [
+        "I am not"
+      ],
+      [
+        "blind to the worth of"
+      ],
+      [
+        "the wonderful gift of"
+      ]
+    ],
+    "raw_text": "I am not\nblind to the worth of\nthe wonderful gift of"
+  },
+  {
+    "file": "handwritten_he.png",
+    "category": "Modern Hebrew ink on paper, HHD_age excerpt",
+    "headings": [
+      "טקסט"
+    ],
+    "rows": [
+      [
+        "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+      ]
+    ],
+    "raw_text": "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+  },
+  {
+    "file": "mixed_ink.png",
+    "category": "Printed English and scanned handwritten Hebrew composite",
+    "headings": [
+      "Item",
+      "Notes"
+    ],
+    "rows": [
+      [
+        "101",
+        "Checked"
+      ],
+      [
+        "102",
+        "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+      ]
+    ],
+    "raw_text": "Item Notes\n101 Checked\n102 סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "low_light_blur.png",
+    "category": "Simulated underexposure and blur",
+    "headings": [
+      "Vehicle",
+      "Driver",
+      "Destination",
+      "Delivery Time"
+    ],
+    "rows": [
+      [
+        "102",
+        "Daniel",
+        "Haifa",
+        "09:30"
+      ],
+      [
+        "205",
+        "Maya",
+        "Tel Aviv",
+        "11:15"
+      ],
+      [
+        "318",
+        "Ron",
+        "Kiryat Shmona",
+        "13:00"
+      ]
+    ],
+    "raw_text": "Vehicle Driver Destination Delivery Time\n102 Daniel Haifa 09:30\n205 Maya Tel Aviv 11:15\n318 Ron Kiryat Shmona 13:00",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "slight_rotation.png",
+    "category": "Simulated 3° camera tilt",
+    "headings": [
+      "Vehicle",
+      "Driver",
+      "Destination",
+      "Delivery Time"
+    ],
+    "rows": [
+      [
+        "102",
+        "Daniel",
+        "Haifa",
+        "09:30"
+      ],
+      [
+        "205",
+        "Maya",
+        "Tel Aviv",
+        "11:15"
+      ],
+      [
+        "318",
+        "Ron",
+        "Kiryat Shmona",
+        "13:00"
+      ]
+    ],
+    "raw_text": "Vehicle Driver Destination Delivery Time\n102 Daniel Haifa 09:30\n205 Maya Tel Aviv 11:15\n318 Ron Kiryat Shmona 13:00",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "unlabeled_inventory.png",
+    "category": "Borderless checklist, missing header and middle cell",
+    "headings": [
+      "Column 1",
+      "Column 2",
+      "Column 3"
+    ],
+    "rows": [
+      [
+        "Torque wrench",
+        "3",
+        "Ready"
+      ],
+      [
+        "Radio",
+        "",
+        "Needs test"
+      ],
+      [
+        "First aid kit",
+        "1",
+        "Ready"
+      ]
+    ],
+    "raw_text": "Torque wrench 3 Ready\nRadio  Needs test\nFirst aid kit 1 Ready",
+    "key_columns": [
+      0
+    ]
+  },
+  {
+    "file": "blank.png",
+    "category": "Blank image, expected rejection",
+    "rows": []
+  }
+]

@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+node_modules/
+.expo/
+dist/
+mobile/android/
+mobile/ios/
+*service-account*.json
+*credentials*.json

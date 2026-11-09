@@ -1,0 +1,127 @@
+{
+  "backend": {
+    "status": "ok",
+    "ocr_provider": "tesseract",
+    "ocr_configured": true,
+    "sheets_configured": true,
+    "handwriting_configured": true
+  },
+  "cases": [
+    {
+      "file": "handwritten_en.png",
+      "category": "English cursive on paper, archival excerpt",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "gemini/gemini-3.5-flash",
+      "expected_rows": 3,
+      "extracted_rows": 3,
+      "matched_rows": 3,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 3,
+      "correct_fields": 2,
+      "incorrect_fields": 1,
+      "missing_fields": 0,
+      "field_accuracy": 0.6667,
+      "headings_exact": true,
+      "ocr_cer": 0.0385,
+      "flagged_fields": 0,
+      "warning_codes": [
+        "headings_inferred",
+        "provider_notice"
+      ],
+      "server_duration_ms": 8027,
+      "http_duration_ms": 8033,
+      "actual_headings": [
+        "Text"
+      ],
+      "actual_records": [
+        [
+          "I am not"
+        ],
+        [
+          "blind to the worth of"
+        ],
+        [
+          "this wonderful gift of"
+        ]
+      ],
+      "actual_raw_text": "I am not\nblind to the worth of\nthis wonderful gift of"
+    },
+    {
+      "file": "handwritten_he.png",
+      "category": "Modern Hebrew ink on paper, HHD_age excerpt",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "gemini/gemini-3.5-flash",
+      "expected_rows": 1,
+      "extracted_rows": 1,
+      "matched_rows": 1,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 1,
+      "correct_fields": 1,
+      "incorrect_fields": 0,
+      "missing_fields": 0,
+      "field_accuracy": 1.0,
+      "headings_exact": true,
+      "ocr_cer": 0.0,
+      "flagged_fields": 0,
+      "warning_codes": [
+        "headings_inferred",
+        "provider_notice"
+      ],
+      "server_duration_ms": 7515,
+      "http_duration_ms": 7519,
+      "actual_headings": [
+        "טקסט"
+      ],
+      "actual_records": [
+        [
+          "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+        ]
+      ],
+      "actual_raw_text": "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+    },
+    {
+      "file": "mixed_ink.png",
+      "category": "Printed English and scanned handwritten Hebrew composite",
+      "http_status": 200,
+      "error_code": null,
+      "provider": "gemini/gemini-3.5-flash",
+      "expected_rows": 2,
+      "extracted_rows": 2,
+      "matched_rows": 2,
+      "record_recall": 1.0,
+      "unexpected_rows": 0,
+      "expected_fields": 4,
+      "correct_fields": 4,
+      "incorrect_fields": 0,
+      "missing_fields": 0,
+      "field_accuracy": 1.0,
+      "headings_exact": true,
+      "ocr_cer": 0.0,
+      "flagged_fields": 0,
+      "warning_codes": [
+        "provider_notice"
+      ],
+      "server_duration_ms": 7582,
+      "http_duration_ms": 7587,
+      "actual_headings": [
+        "Item",
+        "Notes"
+      ],
+      "actual_records": [
+        [
+          "101",
+          "Checked"
+        ],
+        [
+          "102",
+          "סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+        ]
+      ],
+      "actual_raw_text": "Item Notes\n101 Checked\n102 סוללות כבר מזמן לא רק מספקות את האנרגיה שדרושה לנו כדי להעביר"
+    }
+  ]
+}
