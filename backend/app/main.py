@@ -52,7 +52,13 @@ class BoundedBody:
         if scope["type"] != "http" or scope["method"] != "POST" or not path.startswith("/api/"):
             await self.app(scope, receive, send)
             return
-        limit = MAX_IMAGE_BYTES + 65536 if path.rstrip("/") == "/api/documents/process" else 4 * 1024 * 1024
+        route = path.rstrip("/")
+        limit = 4 * 1024 * 1024
+        if route == "/api/documents/process":
+            limit = MAX_IMAGE_BYTES + 65536
+        elif route == "/api/records/edit":
+            # An edit includes both the original and the new table rows.
+            limit *= 2
         body = bytearray()
         while True:
             message = await receive()

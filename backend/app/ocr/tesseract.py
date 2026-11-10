@@ -155,13 +155,14 @@ def layout(words: list[Word]) -> tuple[Transcription, dict[int, list[float | Non
                 near.add(closest)
         return len(near) >= 2
 
-    candidates = [
+    candidate = next((
         (i, row) for i, row in enumerate(rows)
         if 2 <= len(row) <= MAX_COLUMNS
         and sum(text_of(chunk).strip().casefold() in LABELS for chunk in row) >= 2
-    ]
-    if candidates:
-        header, reference = candidates[0]
+    ), None)
+    # A row with familiar labels can be data. Keep earlier aligned rows in review.
+    if candidate and not any(repeated_columns(candidate[1], row) for row in rows[:candidate[0]]):
+        header, reference = candidate
     else:
         header = -1
         reference = next((

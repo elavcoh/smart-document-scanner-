@@ -26,6 +26,38 @@ EXPO_PUBLIC_API_URL=http://10.0.2.2:8000 npm start -- --android
 
 Keep both terminals running. Use Expo Go compatible with SDK 57. If the app cannot connect, check **Check backend connection** and run `curl -fsS http://127.0.0.1:8000/health` on the Mac. [Expo Go downloads](https://expo.dev/go).
 
+## Run on a physical Android phone
+
+Connect the phone and Mac to the same trusted Wi-Fi network. On the Mac, run
+`networksetup -listallhardwareports` to find the device for Wi-Fi. The commands
+below use `en0`. Replace it if your Mac lists a different device.
+
+From the project root, start the backend on the local network.
+
+```bash
+cd backend
+.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --limit-concurrency 16 --no-access-log
+```
+
+In a second terminal from the project root, start Expo for the phone.
+
+```bash
+SCANNER_MAC_IP=$(ipconfig getifaddr en0)
+curl -fsS "http://${SCANNER_MAC_IP}:8000/health"
+cd mobile
+EXPO_PUBLIC_API_URL="http://${SCANNER_MAC_IP}:8000" npm start
+```
+
+Scan the Expo QR code with Expo Go, then tap **Check backend connection**.
+On a phone, `localhost` points to the phone itself. The `10.0.2.2` address is
+for the Android emulator. If the phone cannot connect, open the Mac's health
+URL in the phone browser. Check that both devices use the same network and
+that the macOS firewall allows the Python and Node processes to receive
+local connections. For a custom Android development build, set
+`SCANNER_ANDROID_DEV_HTTP=1` at build time to allow local HTTP. Keep this
+server on the trusted network. **Open CSV on Mac** requires a loopback
+connection. On a physical phone, use **Save CSV to device** or **Share CSV**.
+
 ## Try the demo
 
 1. Copy `samples/printed_en.png` or `samples/printed_he.png` to the emulator. Tap **Choose From Gallery**, then **Extract Records → On the Mac**.
@@ -35,7 +67,7 @@ Keep both terminals running. Use Expo Go compatible with SDK 57. If the app cann
 ## Optional integrations
 
 - **Gemini for handwriting and mixed pages.** Set `GEMINI_API_KEY` in the root `.env`, restart the backend, and select **Extract Records → Use Gemini** on a sample such as `samples/mixed_ink.png`. This sends the prepared image to Google. The server tries Flash‑Lite once if the primary Flash model hits its quota or returns a temporary service error. [Google AI Studio](https://aistudio.google.com/apikey).
-- **Google Sheets for export and history.** Enable the Sheets API, create a service account, and share a workbook containing a blank `Scans` tab with the service account as **Editor**. Set `SHEETS_CREDENTIALS_FILE` to the absolute path of its JSON key and set `SHEETS_SPREADSHEET_ID` to the ID between `/d/` and `/edit` in the workbook URL. Keep the JSON key outside the project and restart the backend. Open a document from history to edit it in the app or browser editor. Its document tab in Google Sheets is a live view. [Service account setup](https://cloud.google.com/iam/docs/keys-create-delete).
+- **Google Sheets for export and history.** Enable the Sheets API, create a service account, and share a workbook containing a blank `Scans` tab with the service account as **Editor**. Set `SHEETS_CREDENTIALS_FILE` to the absolute path of its JSON key and set `SHEETS_SPREADSHEET_ID` to the ID between `/d/` and `/edit` in the workbook URL. Keep the JSON key outside the project and restart the backend. Open a document from history to edit it in the app or browser editor. Its document tab in Google Sheets is a live view. Use **Refresh saved rows** in the app to load changes from the browser editor. A refresh asks before replacing unsaved edits. [Service account setup](https://cloud.google.com/iam/docs/keys-create-delete).
 
 Use fictional data for the demo. The backend is designed for local use. Keep API keys in the server environment and restrict access to the workbook.
 

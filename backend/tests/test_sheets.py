@@ -5,6 +5,7 @@ Also check retries and two requests trying to save the same document.
 """
 
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 from threading import Barrier
 from types import SimpleNamespace
 from urllib.parse import quote
@@ -337,3 +338,23 @@ def test_english_and_hebrew_uploads_keep_their_own_headings_and_edits():
     with pytest.raises(AppError) as error:
         SheetDocuments(SETTINGS, base).append(hebrew.model_copy(update={"headings": english.headings}))
     assert error.value.code == "sheets_already_exported"
+
+
+def test_edit_accepts_both_snapshots_of_a_large_saved_table(monkeypatch):
+    """Leave enough room for original and edited rows in one request."""
+    rows = [["a" * 3000, "b" * 3000, "c" * 3000] for _ in range(250)]
+    table = ReviewedTable(document_id=uuid4(), headings=["A", "B", "C"], rows=rows)
+    changed = [["updated", *rows[0][1:]], *rows[1:]]
+
+    def save(edit):
+        """Check that the API sends the full original table to the editor."""
+        assert edit.original == rows
+        return {"document_id": edit.document_id, "headings": edit.headings, "rows": edit.rows}
+
+    monkeypatch.setattr("app.main.sheet_documents", lambda _: nullcontext(SimpleNamespace(update_document=save)))
+    client = TestClient(create_app(SETTINGS))
+    response = client.post("/api/records/edit", json={
+        **table.model_dump(mode="json"), "rows": changed, "original": rows,
+    })
+    assert response.status_code == 200
+    assert response.json()["rows"][0][0] == "updated"

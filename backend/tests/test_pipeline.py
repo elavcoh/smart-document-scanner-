@@ -314,7 +314,7 @@ def test_local_geometry_groups_mildly_tilted_rows():
         ["102", "Daniel", "Haifa"],
         ["205", "Maya", "Ashdod"],
     ]
-    words = []
+    words = [Word("Weekly report", 12, 10, 104, 23, 0.94)]
     for row, cells in enumerate(rows):
         for x, text in zip((12, 325, 720), cells, strict=True):
             words.append(Word(text, x, 90 + row * 105 - x * 0.052, 8 * len(text), 23, 0.94))
@@ -322,3 +322,35 @@ def test_local_geometry_groups_mildly_tilted_rows():
     result = extract(Recognition(provider="tesseract/test", transcription=transcript, confidence=confidence), [])
     assert result.headings == rows[0]
     assert [record.cells for record in result.records] == rows[1:]
+    assert "Weekly report" in result.raw_text
+
+
+def test_local_geometry_keeps_rows_above_a_false_header():
+    """Keep the table when a data row happens to contain familiar labels."""
+    rows = [
+        ["Column A", "Column B"],
+        ["Traffic", "Signal"],
+        ["Time", "Date"],
+        ["Morning", "Tuesday"],
+    ]
+    words = [
+        Word(cell, x, 90 + row * 70, 8 * len(cell), 23, 0.94)
+        for row, cells in enumerate(rows)
+        for x, cell in zip((12, 325), cells, strict=True)
+    ]
+    transcript, confidence = layout(words)
+    result = extract(Recognition(provider="tesseract/test", transcription=transcript, confidence=confidence), [])
+    assert [record.cells for record in result.records] == rows
+    assert any(warning.code == "headings_inferred" for warning in result.warnings)
+
+
+def test_extremely_narrow_image_returns_a_clear_error():
+    """Reject a photo that becomes too narrow for the image quality check."""
+    photo = Image.new("RGB", (100_000, 120), "white")
+    ImageDraw.Draw(photo).rectangle((0, 0, 49_999, 119), fill="black")
+    data = BytesIO()
+    photo.save(data, format="PNG")
+    client = TestClient(create_app(Settings(provider="tesseract")))
+    response = client.post("/api/documents/process", files={"image": ("narrow.png", data.getvalue(), "image/png")})
+    assert response.status_code == 422
+    assert response.json()["code"] == "image_too_narrow"

@@ -144,6 +144,12 @@ export function loadHistory() {
   return call<SheetHistory>('/api/records', {}, 45_000, response => response.json());
 }
 
+/** Read the current saved rows for a single document. */
+export function loadDocument(documentId: string) {
+  return call<ReviewedTable>(`/api/records/${encodeURIComponent(documentId)}`, {}, 45_000,
+    response => response.json());
+}
+
 /**
  * Send the ID, headings, and both versions of the rows.
  * The server can reject a save if the rows changed after we loaded them.

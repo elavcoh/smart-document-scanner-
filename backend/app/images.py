@@ -56,6 +56,8 @@ def prepare_image(data: bytes, mime: str | None) -> tuple[bytes, list[Warning]]:
     # Use a small gray copy for the quality checks. Keep the color image for OCR.
     gray = image.convert("L")
     gray.thumbnail((850, 850))
+    if min(gray.size) <= 2:
+        raise AppError(422, "image_too_narrow", "Choose a photo that shows the full page.")
     brightness, contrast = ImageStat.Stat(gray).mean[0], ImageStat.Stat(gray).stddev[0]
     if contrast < 1.5:
         raise AppError(422, "blank_image", "The image appears blank. Try retaking the photo.")

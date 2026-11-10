@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, BackHandler, Image, Keyboard, Linking, ScrollView, Share, StatusBar, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-import { ApiError, checkBackend, clearPending, documentEditorUrl, getDocumentSheet, loadHistory, loadPending, openCsvOnMac, previewCsv, processPhoto, savePending, updateDocument, uploadSheets, type ExtractionMode } from './src/api';
+import { ApiError, checkBackend, clearPending, documentEditorUrl, getDocumentSheet, loadDocument, loadHistory, loadPending, openCsvOnMac, previewCsv, processPhoto, savePending, updateDocument, uploadSheets, type ExtractionMode } from './src/api';
 import { exportCsv, openSavedCsv, saveCsv } from './src/csv';
 import { CsvPreview, type CsvPreviewData } from './src/CsvPreview';
 import { preparePhoto, rotatePhoto } from './src/photo';
@@ -54,6 +54,8 @@ function Scanner() {
   const [editing, setEditing] = useState<SheetDocument | null>(null);
   const [editedRows, setEditedRows] = useState<string[][]>([]);
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | null>(null);
+  const hasUnsavedEdits = !!editing && editedRows.some((row, index) =>
+    row.some((cell, column) => cell !== editing.rows[index][column]));
   // Export saved history rows. Edits only become part of the saved table after a successful save.
   const savedHistoryTable = editing?.document_id
     ? { document_id: editing.document_id, headings: editing.headings, rows: editing.rows }
@@ -133,7 +135,7 @@ function Scanner() {
     if (screen === 'history') {
       go('home');
     } else if (screen === 'editDocument') {
-      go('history');
+      confirmDiscardEdits(() => go('history'));
     } else if (screen === 'preview') {
       go(previewFromReview && draft ? 'review' : 'home');
     } else if (screen === 'review') {
@@ -149,7 +151,7 @@ function Scanner() {
   useEffect(() => {
     const listener = BackHandler.addEventListener('hardwareBackPress', back);
     return () => listener.remove();
-  }, [screen, draft, reviewed, previewFromReview, photo]);
+  }, [screen, draft, reviewed, previewFromReview, photo, hasUnsavedEdits]);
 
   /** Open the camera or gallery and prepare the selected image. */
   async function pick(camera: boolean) {
@@ -413,6 +415,34 @@ function Scanner() {
     go('editDocument');
   }
 
+  /** Protect local edits before leaving or loading saved rows again. */
+  function confirmDiscardEdits(proceed: () => void) {
+    if (!hasUnsavedEdits) {
+      proceed();
+      return;
+    }
+    Alert.alert('Discard unsaved edits?', 'Your changes have not been saved to Google Sheets.', [
+      { text: 'Keep editing', style: 'cancel' },
+      { text: 'Discard changes', style: 'destructive', onPress: proceed },
+    ]);
+  }
+
+  /** Read the latest saved version before opening or refreshing a document. */
+  function openLatestDocument(document: SheetDocument) {
+    const documentId = document.document_id;
+    if (!documentId) {
+      openDocument(document);
+      return;
+    }
+    void run('Loading document', async () => {
+      const latest = await loadDocument(documentId);
+      setHistory(current => current && {
+        documents: current.documents.map(item => item.document_id === documentId ? latest : item),
+      });
+      openDocument(latest);
+    });
+  }
+
   /** Find the confirmed upload by ID in the latest history and open it. */
   function openUploadedDocument(documentId: string) {
     void run('Opening document', async () => {
@@ -529,7 +559,7 @@ function Scanner() {
             <View key={document.document_id ?? `ungrouped-${index}`} style={styles.card}>
               <Text style={styles.sectionTitle}>{document.document_id ? `Document ${index + 1}` : 'Ungrouped records'}</Text>
               <Text style={styles.body}>{document.rows.length} records</Text>
-              <Action title="Open document" disabled={!!busy} onPress={() => openDocument(document)} />
+              <Action title="Open document" disabled={!!busy} onPress={() => openLatestDocument(document)} />
             </View>
           ))}
           <Action title="Home" disabled={!!busy} onPress={() => go('home')} />
@@ -540,6 +570,8 @@ function Scanner() {
           {!editing.document_id && <Banner>These older rows could not be matched to an uploaded document.</Banner>}
           {savedHistoryTable && <View style={styles.card}>
             <Text style={styles.sectionTitle}>Saved document</Text>
+            <Action title="Refresh saved rows" disabled={!!busy} busy={busy === 'Loading document'}
+              onPress={() => confirmDiscardEdits(() => openLatestDocument(editing))} />
             <Action title="Edit in browser" disabled={!!busy} busy={busy === 'Opening browser editor'}
               onPress={() => openWebEditor(savedHistoryTable.document_id)} />
             <Action title="View in Google Sheets" disabled={!!busy}
@@ -561,7 +593,8 @@ function Scanner() {
           {!!editing.document_id && <Action title="Save document to Google Sheets" variant="primary" onPress={saveDocument}
             disabled={!!busy || editedRows.some(row => !row.some(cell => cell.trim()))}
             busy={busy === 'Saving document'} />}
-          <Action title="Back to history" disabled={!!busy} onPress={() => go('history')} />
+          <Action title="Back to history" disabled={!!busy}
+            onPress={() => confirmDiscardEdits(() => go('history'))} />
         </>}
         {/* Preview lets the user check the photo before picking an OCR mode. */}
         {screen === 'preview' && photo && <>
