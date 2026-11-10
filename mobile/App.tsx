@@ -533,7 +533,7 @@ function Scanner() {
           </View>
           <Action title="Enter records manually" disabled={!!busy} onPress={chooseManualLanguage} />
           <Action title="Open saved CSV" disabled={!!busy} busy={busy === 'Opening saved CSV'} onPress={chooseSavedCsv} />
-          <Action title="Document history" disabled={!!busy} onPress={() => {
+          <Action title="Google Sheets History" disabled={!!busy} onPress={() => {
             setHistory(null);
             go('history');
             refreshHistory();
@@ -551,10 +551,11 @@ function Scanner() {
         </>}
         {/* History shows one card per document, even when it has several rows. */}
         {screen === 'history' && <>
-          <Text style={styles.title}>Document history</Text>
+          <Text style={styles.title}>Google Sheets History</Text>
+          <Text style={styles.body}>Only documents successfully uploaded to Google Sheets appear here.</Text>
           <Text style={styles.body}>Open a document to view all its records together.</Text>
           <Action title="Refresh" onPress={refreshHistory} disabled={!!busy} busy={busy === 'Loading history'} />
-          {history?.documents.length === 0 && <Banner>No uploaded documents yet.</Banner>}
+          {history?.documents.length === 0 && <Banner>No documents uploaded to Google Sheets yet.</Banner>}
           {history?.documents.map((document, index) => (
             <View key={document.document_id ?? `ungrouped-${index}`} style={styles.card}>
               <Text style={styles.sectionTitle}>{document.document_id ? `Document ${index + 1}` : 'Ungrouped records'}</Text>
