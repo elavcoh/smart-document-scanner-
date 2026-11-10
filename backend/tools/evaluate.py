@@ -1,4 +1,8 @@
-"""Measure unedited extraction through the running HTTP API against a manifest."""
+"""Check how well OCR reads our sample images.
+
+Send each image to a running server and compare the raw result with the expected rows.
+Write a report with row and text scores before any manual edits.
+"""
 import argparse
 import json
 import mimetypes

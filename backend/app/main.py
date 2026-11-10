@@ -1,4 +1,8 @@
-"""Connect the app's HTTP routes to OCR, review, and export logic."""
+"""Start the FastAPI server and define the API routes.
+
+The routes handle uploads, CSV, Google Sheets, and the browser editor.
+They pass the work to smaller files and turn errors into API replies.
+"""
 
 from pathlib import Path
 from time import perf_counter
@@ -40,7 +44,10 @@ class BoundedBody:
         self.app = app
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
-        """Check the body size before the API tries to parse an upload or JSON."""
+        """Count the request bytes before FastAPI reads the upload or JSON.
+
+        Stop early if the body is too big. Send valid requests on to the API.
+        """
         path = scope.get("path", "")
         if scope["type"] != "http" or scope["method"] != "POST" or not path.startswith("/api/"):
             await self.app(scope, receive, send)
@@ -76,7 +83,10 @@ class BoundedBody:
 
 
 def build_provider(settings: Settings) -> OCRProvider:
-    """Create the OCR provider selected in the server settings."""
+    """Create the default OCR provider from the server settings.
+
+    Use the model names for Gemini or the language packs for Tesseract.
+    """
     if settings.provider == "gemini":
         return GeminiOCR(settings.gemini_api_key, settings.gemini_model, settings.gemini_fallback_model)
     return TesseractOCR(settings.tesseract_languages)
@@ -116,13 +126,19 @@ def create_app(settings: Settings | None = None, provider: OCRProvider | None = 
 
     @app.get("/health")
     def health():
-        """Show whether the server is running and which services are configured."""
+        """Return a quick check for the app connection screen.
+
+        Show which services have settings in place. This does not run OCR or open Sheets.
+        """
         return {"status": "ok", "ocr_provider": settings.provider, "ocr_configured": provider.configured,
                 "sheets_configured": settings.sheets_configured,
                 "handwriting_configured": handwriting_provider.configured}
 
     def process(data: bytes, mime: str | None, recognizer: OCRProvider) -> ProcessResult:
-        """Prepare the image, run OCR, and record the processing time."""
+        """Take the uploaded bytes and MIME type and prepare a JPEG.
+
+        Run the chosen OCR provider, build review rows, and include the time used.
+        """
         start = perf_counter()
         jpeg, image_warnings = prepare_image(data, mime)
         result = extract(recognizer.recognize(jpeg), image_warnings)
@@ -132,7 +148,10 @@ def create_app(settings: Settings | None = None, provider: OCRProvider | None = 
     @app.post("/api/documents/process", response_model=ProcessResult)
     async def process_document(image: Annotated[UploadFile, File(description="One JPEG, PNG or WebP page")],
                                mode: Literal["default", "handwriting", "local"] = "default"):
-        """Read one uploaded image and run its OCR work off the async loop."""
+        """Read one photo and choose the OCR provider for the requested mode.
+
+        Run the image work in a worker thread so it does not block the async API.
+        """
         try:
             recognizer = recognizers[mode]
             if mode == "handwriting" and not recognizer.configured:
@@ -159,7 +178,10 @@ def create_app(settings: Settings | None = None, provider: OCRProvider | None = 
 
     @app.post("/api/exports/sheets", response_model=SheetsResult)
     def export_sheets(table: ReviewedTable):
-        """Send the reviewed table to Sheets under the write lock."""
+        """Take the checked rows and send them to the correct Sheets tab.
+
+        Hold the write lock while saving so requests in this server take turns.
+        """
         with WRITE_LOCK, sheet_documents(settings) as documents:
             return documents.append(table)
 
@@ -195,7 +217,10 @@ def create_app(settings: Settings | None = None, provider: OCRProvider | None = 
 
     @app.post("/api/records/edit", response_model=SheetDocument)
     def update_document(edit: SheetDocumentEdit):
-        """Save edited rows through the same route for the app and browser."""
+        """Take the old and new rows from the phone or browser.
+
+        Send the edit to the document store while holding the write lock.
+        """
         with WRITE_LOCK, sheet_documents(settings) as client:
             return client.update_document(edit)
 

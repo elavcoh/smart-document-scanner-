@@ -1,4 +1,8 @@
-"""Route each document to the data tab with its column headings."""
+"""Find which Google Sheets tab holds a document.
+
+Keep tables with different headings in separate data tabs.
+Read them together in history and send each edit to its own data tab.
+"""
 import json
 from contextlib import contextmanager
 from dataclasses import replace
@@ -51,7 +55,10 @@ class SheetDocuments:
         return self.client(tab)
 
     def layout_tab(self, headings: list[str]):
-        """Find or create a tab for this exact list of headings."""
+        """Find or create a data tab for this exact set and order of headings.
+
+        Use a short hash so the same headings can find the same tab again.
+        """
         checksum = digest(json.dumps(headings, ensure_ascii=False))
         layout = f"{self.scope}:{checksum}"
         for tab in self.tabs:
@@ -68,7 +75,10 @@ class SheetDocuments:
         return {"sheetId": tab_id, "title": title}
 
     def append(self, table: ReviewedTable):
-        """Reuse a previous upload's tab or choose one based on the headings."""
+        """Choose where to save a reviewed table.
+
+        Check the previous upload first for retries, then pick a tab by the headings.
+        """
         previous = self.uploaded_tab(table.document_id)
         if previous:
             return self.client(previous).append(table)

@@ -1,4 +1,7 @@
-"""Errors that the server can show to the app."""
+"""Keep the errors that the API can explain to the app.
+
+Each error has an HTTP status, a short code, and a message for the user.
+"""
 
 class AppError(Exception):
     """Keep the HTTP status, error code, and message together."""

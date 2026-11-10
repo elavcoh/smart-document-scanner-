@@ -1,4 +1,8 @@
-"""Data formats used for recognition, review, and export."""
+"""Define the data that goes in and out of the API.
+
+OCR results have proposed values and warnings. Reviewed tables have checked values.
+These models also check that headings and rows fit before we export or save.
+"""
 
 from typing import Annotated, Literal
 from uuid import UUID
@@ -28,7 +32,10 @@ class Record(BaseModel):
 
 
 class ProcessResult(BaseModel):
-    """The OCR result that the app sends to the review screen."""
+    """The OCR result the API sends to the review screen.
+
+    It has the raw text, proposed headings and rows, reading direction, and warnings.
+    """
     document_id: UUID
     provider: str
     raw_text: str
@@ -41,7 +48,10 @@ class ProcessResult(BaseModel):
 
 
 class ReviewedTable(BaseModel):
-    """The confirmed table used by both export routes."""
+    """The table the user has checked and can export.
+
+    The same document ID and row values can go to either CSV or Sheets.
+    """
     model_config = ConfigDict(extra="forbid", strict=True)
 
     document_id: UUID = Field(strict=False)
@@ -52,7 +62,10 @@ class ReviewedTable(BaseModel):
 
     @model_validator(mode="after")
     def validate_table(self):
-        """Check that the headings and rows make a valid table for export."""
+        """Check that headings and rows form a table we can export.
+
+        Reject invalid or repeated headings and check that each row fits the table.
+        """
         if any(not heading.strip() for heading in self.headings):
             raise ValueError("Name each column before exporting.")
         if len({heading.strip().casefold() for heading in self.headings}) != len(self.headings):
@@ -79,7 +92,10 @@ class SheetHistory(BaseModel):
 
 
 class SheetDocumentEdit(ReviewedTable):
-    """The new rows and the original rows from when editing started."""
+    """The new rows plus the original rows from when editing started.
+
+    The server uses the old rows to see if the saved data changed during editing.
+    """
     original: list[list[CellText]] = Field(min_length=1, max_length=MAX_ROWS)
 
     @model_validator(mode="after")

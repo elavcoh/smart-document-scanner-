@@ -1,4 +1,8 @@
-"""Send a prepared image to Gemini and read its structured transcription."""
+"""Use Gemini to read print and handwriting from a JPEG.
+
+Ask for structured text and check the JSON before using it.
+Try a backup model for some temporary errors or quota errors.
+"""
 
 import httpx
 from google import genai

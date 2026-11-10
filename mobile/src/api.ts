@@ -1,10 +1,15 @@
-/** Requests from the mobile app to the scanner backend. */
+/**
+ * Keep the calls from the app to the server in one place.
+ * Build the URLs, read replies, and turn errors into messages the screens can show.
+ * This file also keeps a local copy of a Sheets upload that may need a retry.
+ */
 
 import { File, Paths } from 'expo-file-system';
 
 import type { Extraction, Photo, ReviewedTable, SheetDocument, SheetHistory, SheetsResult } from './types';
 
 const URL_SETTING = process.env.EXPO_PUBLIC_API_URL?.trim().replace(/\/+$/, '');
+// Keep the upload on the device so it can be retried after the app closes.
 const pendingFile = new File(Paths.document, 'scanner-pending-sheets.json');
 
 /** An API failure with a code the screen can check. */
@@ -58,7 +63,10 @@ async function call<T>(
 /** The two OCR choices shown in the photo preview. */
 export type ExtractionMode = 'handwriting' | 'local';
 
-/** Upload a prepared JPEG to the selected OCR mode. */
+/**
+ * Send the working JPEG as a form upload.
+ * Pass the selected OCR mode in the URL and return the server result for review.
+ */
 export function processPhoto(photo: Photo, mode: ExtractionMode) {
   const form = new FormData();
   form.append('image', new File(photo.uri), 'document.jpg');
@@ -98,7 +106,10 @@ export function openCsvOnMac(table: ReviewedTable) {
   return call<{ filename: string }>('/api/exports/csv/mac', jsonPost(table), 25_000, response => response.json());
 }
 
-/** Upload a reviewed table and check that the server confirmed it. */
+/**
+ * Send the checked table to Google Sheets through the server.
+ * Only accept a confirmed reply with the expected row count and a Sheets link.
+ */
 export function uploadSheets(table: ReviewedTable) {
   return call<SheetsResult>('/api/exports/sheets', jsonPost(table), 90_000, async response => {
     const data: SheetsResult = await response.json();
@@ -133,7 +144,10 @@ export function loadHistory() {
   return call<SheetHistory>('/api/records', {}, 45_000, response => response.json());
 }
 
-/** Send the original and edited rows so the backend can check for changes. */
+/**
+ * Send the ID, headings, and both versions of the rows.
+ * The server can reject a save if the rows changed after we loaded them.
+ */
 export function updateDocument(document: SheetDocument, rows: string[][]) {
   const { document_id, headings, rows: original } = document;
   return call<SheetDocument>('/api/records/edit', jsonPost({ document_id, headings, original, rows }),

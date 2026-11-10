@@ -1,4 +1,8 @@
-/** Save, read, and share CSV files on Android. */
+/**
+ * Handle CSV files on the Android device.
+ * Get the CSV from the server, then save it to a folder or make a copy for sharing.
+ * Also open an existing file so the app can show it again.
+ */
 
 import { Directory, File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -37,7 +41,10 @@ export async function openSavedCsv() {
   return selected.result.text();
 }
 
-/** Write a copy to the cache and open the Android share menu. */
+/**
+ * Get the CSV bytes and wriite them to a file in the app cache.
+ * Give Android the file path so the user can pick where to share it.
+ */
 export async function exportCsv(table: ReviewedTable) {
   const { bytes, filename } = await fetchCsv(table);
   const file = new File(Paths.cache, filename);

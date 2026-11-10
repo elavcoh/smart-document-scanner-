@@ -1,4 +1,8 @@
-"""Read printed text locally and group Tesseract words into rows and cells."""
+"""Use local Tesseract to read printed text from a JPEG.
+
+Tesseract gives us words with positions and scores.
+Use the positions to find rows and columns, then return a shared OCR result.
+"""
 
 import csv
 import io
@@ -55,7 +59,10 @@ def parse_words(tsv: str) -> list[Word]:
 
 def text_of(segment: list[Word]) -> str:
     # Reverse visual word order for Hebrew runs while keeping contiguous Latin/numeric runs together.
-    """Join the words in reading order, including mixed Hebrew and English."""
+    """Join one group of words in reading order.
+
+    Use the text direction while keeping nearby words of the same direction together.
+    """
     joined = " ".join(word.text for word in segment)
     if not HEBREW.search(joined):
         return joined
@@ -89,7 +96,10 @@ def skew_slope(words: list[Word], scale: float) -> float:
 
 
 def split_rows(words: list[Word]) -> tuple[list[list[list[Word]]], float]:
-    """Group words by height on the page and split each row at large gaps."""
+    """Group word boxes that sit at about the same height.
+
+    Use a tilt estimate first, then split each row at wide gaps to find cells.
+    """
     scale = statistics.median(word.height for word in words)
     slope = skew_slope(words, scale)
 
@@ -199,7 +209,11 @@ class TesseractOCR:
         return shutil.which("tesseract") is not None
 
     def recognize(self, jpeg: bytes) -> Recognition:
-        """Run Tesseract with a timeout and return the recognized lines and scores."""
+        """Send the JPEG bytes to the local Tesseract program.
+
+        Read its TSV output into word boxes, then build the lines and confidence scores.
+        Stop the OCR call after the time limit.
+        """
         if not self.configured:
             raise AppError(503, "ocr_not_configured", "Install Tesseract and its English and Hebrew language data.")
         try:

@@ -1,4 +1,8 @@
-"""Tests for image checks, OCR results, and CSV export."""
+"""Test the path from an image upload to OCR review and CSV export.
+
+Use small images and fake OCR replies so most tests can run on their own.
+Check bad input and service errors as well as normal results.
+"""
 
 import csv
 from io import BytesIO, StringIO

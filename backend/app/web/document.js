@@ -1,4 +1,8 @@
-/** Load and edit one saved scanner document in the browser. */
+/**
+ * Run the browser editor for one saved document.
+ * Load its current rows from the server and turn them into text fields.
+ * Send edits back to the same API used by the mobile app.
+ */
 
 'use strict';
 
@@ -99,7 +103,10 @@ function showTable(columns, rows) {
   grid.hidden = false;
 }
 
-/** Fetch the current rows, asking first if local edits would be lost. */
+/**
+ * Load the latest saved rows from the API.
+ * Ask first if reloading would replace local edits. Keep the loaded values to check later saves.
+ */
 async function load() {
   if (busy || (hasChanges() && !confirm('Discard your unsaved edits and reload?'))) return;
   busy = true;

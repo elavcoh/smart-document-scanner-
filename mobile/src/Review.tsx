@@ -1,4 +1,8 @@
-/** Let the user compare OCR output and correct rows before export. */
+/**
+ * Show the draft rows before export.
+ * Let the user check OCR warnings, compare the source text, and fix headings or cells.
+ * Send changes back to App so there is one place that holds the draft.
+ */
 
 import { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
@@ -20,7 +24,10 @@ type Props = {
   confirm: () => void;
 };
 
-/** Show editable records, the source text, and any OCR warnings. */
+/**
+ * Show the extracted rows and warnings next to their text fields.
+ * Use the edit callbacks to update the draft in App. Block edits when the draft is locked.
+ */
 export function Review({ draft, locked, uploaded, updateHeading, addColumn, addRow, removeRow, updateCell, preview, confirm }: Props) {
   const [showRaw, setShowRaw] = useState(false);
   const [showHeadings, setShowHeadings] = useState(false);

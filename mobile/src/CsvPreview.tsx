@@ -1,4 +1,8 @@
-/** Show CSV text and keep its file actions in one preview. */
+/**
+ * Show the CSV and its actions in one place.
+ * A new export can be saved or shared here. An old file can be opened to read it.
+ * The main app handles the file work when a button is pressed.
+ */
 
 import { useState } from 'react';
 import { Modal, ScrollView, Text, View } from 'react-native';
@@ -23,7 +27,10 @@ type Props = {
   onOpenOnMac: (table: ReviewedTable) => void;
 };
 
-/** Show the CSV and its available save, share, and close actions. */
+/**
+ * Show the CSV as text and show the actions for this kind of preview.
+ * Use the callbacks from App when the user saves, shares, or closes the preview.
+ */
 export function CsvPreview({ preview, busy, notice, onClose, onSave, onShare, onOpenOnMac }: Props) {
   const [more, setMore] = useState(false);
   const { table, text, saved } = preview;

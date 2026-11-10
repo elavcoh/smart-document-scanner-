@@ -1,4 +1,8 @@
-/** Android settings for Expo, including the camera and local dev HTTP option. */
+/**
+ * Set up the Android app for Expo.
+ * This file gives the app its name and configures the camera permission.
+ * It also allows local HTTP so the app can reach the demo server.
+ */
 
 module.exports = {
   name: 'Smart Document Scanner',

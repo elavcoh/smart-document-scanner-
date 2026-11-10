@@ -1,4 +1,8 @@
-"""Tests for Sheets uploads, history, editing, and safe retries."""
+"""Test how we upload, read, and edit documents in Google Sheets.
+
+Use a fake workbook to check what changes without using a real account.
+Also check retries and two requests trying to save the same document.
+"""
 
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
@@ -33,7 +37,10 @@ def response(status, data=None):
 
 
 class FakeSheets:
-    """Minimal REST double with atomic metadata ID uniqueness."""
+    """A small fake version of the Google Sheets API.
+
+    Keep rows in memory and use unique marker IDs to test repeat uploads.
+    """
 
     def __init__(self, rows=None):
         """Set up a data tab and the options for simulating failures."""

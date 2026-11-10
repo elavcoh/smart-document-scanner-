@@ -1,4 +1,8 @@
-/** Shared buttons, messages, inputs, and styles for the scanner. */
+/**
+ * Keep the small UI parts used by several scanner screens.
+ * Use the same buttons, banners, input fields, colors, and spacing.
+ * Text fields can also show Hebrew and English in the right direction.
+ */
 
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native';

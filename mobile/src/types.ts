@@ -1,6 +1,10 @@
-/** A message for the page, a row, or a specific column. */
-/** Data shared by the scanner screens and the backend calls. */
+/**
+ * Define the main types used in the scanner app.
+ * These show what comes from the server, what the user can edit, and what can be exported.
+ * Keep the types here so screens and API calls use the same shape.
+ */
 
+/** A message for the page, a row, or a specific column. */
 export type Warning = { code: string; message: string; column: number | null };
 
 /** The backend OCR result before the user makes edits. */

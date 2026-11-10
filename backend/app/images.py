@@ -1,4 +1,8 @@
-"""Check uploaded images and prepare them for OCR."""
+"""Check each uploaded photo before running OCR.
+
+Fix its rotation, reduce large images, and turn it into a JPEG.
+Return warnings for weak photos and reject files we cannot read.
+"""
 
 from io import BytesIO
 
@@ -49,6 +53,7 @@ def prepare_image(data: bytes, mime: str | None) -> tuple[bytes, list[Warning]]:
     except (UnidentifiedImageError, OSError, ValueError) as exc:
         raise AppError(422, "invalid_image", "The selected file could not be decoded.") from exc
 
+    # Use a small gray copy for the quality checks. Keep the color image for OCR.
     gray = image.convert("L")
     gray.thumbnail((850, 850))
     brightness, contrast = ImageStat.Stat(gray).mean[0], ImageStat.Stat(gray).stddev[0]

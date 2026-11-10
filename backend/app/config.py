@@ -1,4 +1,8 @@
-"""Read server settings and keep shared upload limits in one place."""
+"""Read the settings used by the server.
+
+The project .env can set the OCR mode, Gemini models, and Sheets access.
+This file also keeps the shared size and time limits in one place.
+"""
 
 import os
 from dataclasses import dataclass
@@ -31,7 +35,10 @@ class Settings:
 
     @classmethod
     def from_env(cls):
-        """Load the project environment file and read the server options."""
+        """Load .env from the project folder and read the server options.
+
+        Use the defaults when an option is missing and check the default OCR provider.
+        """
         load_dotenv(ROOT / ".env")
         provider = os.getenv("OCR_PROVIDER", "gemini")
         if provider not in ("gemini", "tesseract"):

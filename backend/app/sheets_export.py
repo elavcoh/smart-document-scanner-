@@ -1,4 +1,8 @@
-"""Read and write one Sheets data tab and keep retries from adding extra rows."""
+"""Read and wriite data in one Google Sheets tab.
+
+Keep rows from the same upload together with a document ID.
+Use an upload marker to check retries and a separate view to show one document.
+"""
 
 import hashlib
 import json
@@ -60,7 +64,10 @@ class SheetsClient:
         self.base = f"https://sheets.googleapis.com/v4/spreadsheets/{quote(self.spreadsheet_id, safe='')}"
 
     def request(self, method: str, suffix: str = "", *, allow_missing: bool = False, **kwargs):
-        """Call Google Sheets and turn HTTP or connection failures into app errors."""
+        """Send a request to Google Sheets with the server account.
+
+        Turn network or HTTP problems into errors the app can show.
+        """
         try:
             response = self.session.request(method, self.base + suffix, timeout=(5, 15), **kwargs)
         except (TransportError, requests.RequestException) as exc:
@@ -131,7 +138,10 @@ class SheetsClient:
         }}
 
     def initialize_document_column(self, tab, grid, width):
-        """Make room for the hidden IDs without overwriting existing data."""
+        """Make space for the hidden column that holds document IDs.
+
+        Keep existing rows and columns when adding this to a tab.
+        """
         if any(len(row) > width and any(value != "" for value in row[width:]) for row in grid[1:]):
             raise AppError(409, "sheets_schema_changed", "The column after the headings contains data. Add a heading before saving.")
         tab_id = tab["sheetId"]
@@ -226,6 +236,7 @@ class SheetsClient:
         if not rows:
             raise AppError(404, "document_not_found", "This document is no longer in history. Refresh and try again.")
 
+        # Make the same view ID on repeat opens so we can reuse the tab.
         view_id = metadata_id(f"scanner:view:{tab['sheetId']}:{document_id}")
         existing = next((sheet for sheet in sheets if sheet["properties"]["sheetId"] == view_id), None)
         url = f"https://docs.google.com/spreadsheets/d/{quote(self.spreadsheet_id, safe='')}/edit?gid={view_id}#gid={view_id}"
@@ -252,6 +263,7 @@ class SheetsClient:
         id_column = column_letter(width + 1)
         ids = f"{source}!{id_column}:{id_column}"
         values = f"{source}!A:{column_letter(width)}"
+        # The view reads from the data tab. Keep the header and rows with this ID.
         formula = f'=FILTER({values},((ROW({ids})=1)+({ids}="{document_id}"))>0)'
         number = list(groups).index(document_id) + 1
         changes.extend([
@@ -341,7 +353,10 @@ class SheetsClient:
             )
 
         def confirmed(existing) -> bool:
-            """Check if this marker confirms the same tab, document, and payload."""
+            """Check that the marker belongs to this tab and document.
+
+            A matching ID with different values is a conflict, even on a retry.
+            """
             if existing is None:
                 return False
             if (existing.get("metadataKey") != METADATA_KEY

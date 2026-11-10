@@ -1,4 +1,8 @@
-"""Turn OCR lines into a table the user can review."""
+"""Turn the text found by OCR into rows and columns.
+
+Check proposed cells against the text from the same line.
+Keep the raw text and warnings so the user can check the result.
+"""
 
 import re
 import unicodedata
@@ -16,7 +20,10 @@ def normalized_text(value: str) -> str:
 
 
 def evidence(cell: str, source: str) -> re.Match | None:
-    """Find a proposed cell in its source text without matching inside a word."""
+    """Look for the proposed cell in the normalized text of one line.
+
+    Use word edges for letters or digits so 12 does not match part of 123.
+    """
     value = normalized_text(cell)
     if not value or "\x00" in value:
         return None
@@ -31,7 +38,11 @@ def grounded(cell: str, source: str) -> bool:
 
 
 def headings_for(line: ImageLine | None, width: int, rtl: bool) -> list[str]:
-    """Use readable headings and make fallback names unique."""
+    """Build one heading for each column, in the same order as the cells.
+
+    Use a default name in the page language if a heading is missing or unclear.
+    Add a number when two headings have the same name.
+    """
     headings, used = [], set()
     for index in range(width):
         candidate = line.cells[index] if line and index < len(line.cells) else None
@@ -61,6 +72,7 @@ def extract(recognition: Recognition, image_warnings: list[Warning], duration_ms
     raw_text = "\n".join(line.source_text for line in page.lines)
     if not raw_text.strip() and not any(line.role == "record" for line in page.lines):
         raise AppError(422, "no_text", "No readable text was detected. Retake the photo or enter records manually.")
+    # Use one heading row and keep the other lines in their original order.
     header_index = next((i for i, line in enumerate(page.lines) if line.role == "heading" and line.cells), None)
     header = page.lines[header_index] if header_index is not None else None
     indexed = [(i, line) for i, line in enumerate(page.lines)
@@ -98,6 +110,7 @@ def extract(recognition: Recognition, image_warnings: list[Warning], duration_ms
                 cells[column], confidence[column] = None, None
                 row_warnings.append(Warning(code="ungrounded_cell", message="This value was omitted because it did not match the row transcript.", column=column))
             else:
+                # Mark the used part so the same text cannot fill another cell.
                 remaining = remaining[:match.start()] + "\x00" + remaining[match.end():]
         if not any(cells) and line.source_text.strip():
             if width == 1 and len(line.source_text.strip()) <= 3000:

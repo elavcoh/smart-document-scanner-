@@ -1,4 +1,8 @@
-/** Prepare a working photo for OCR while keeping the original. */
+/**
+ * Prepare a photo from the camera or gallery for OCR.
+ * Keep the original for comparison and make a smaller JPEG for the server.
+ * Rotate the working copy when the user needs to fix the page direction.
+ */
 
 import { File } from 'expo-file-system';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
@@ -6,7 +10,10 @@ import type { ImagePickerAsset } from 'expo-image-picker';
 
 import type { Photo } from './types';
 
-/** Make a JPEG for OCR and keep the original URI for comparison. */
+/**
+ * Check the picked image size, then resize it if needed and make a JPEG.
+ * Return the new file path and size together with the path of the original photo.
+ */
 export async function preparePhoto(asset: ImagePickerAsset): Promise<Photo> {
   if ((asset.fileSize ?? 0) > 32 * 1024 * 1024 || asset.width * asset.height > 48_000_000) {
     throw new Error('Choose a photo under 32 MiB and 48 megapixels, or retake it at lower resolution.');

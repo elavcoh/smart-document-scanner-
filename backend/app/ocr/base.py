@@ -1,4 +1,8 @@
-"""Shared data types for the local and cloud OCR providers."""
+"""Define the result that both OCR providers return.
+
+A page holds lines in reading order. Each line can hold a heading or row.
+The rest of the server can read this format without knowing which provider ran.
+"""
 
 from typing import Annotated, Literal, Protocol
 

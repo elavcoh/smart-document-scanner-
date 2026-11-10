@@ -1,4 +1,8 @@
-"""Flag suspicious values in extracted rows so the user can check them."""
+"""Look for values the user may need to check after OCR.
+
+Add warnings for things like invalid dates, low scores, or repeated rows.
+The warnings help the user check the result before export.
+"""
 
 import re
 import unicodedata

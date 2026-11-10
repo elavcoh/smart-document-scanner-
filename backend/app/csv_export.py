@@ -1,4 +1,8 @@
-"""Write reviewed tables as CSV files and open them on the Mac."""
+"""Make CSV files from tables the user has checked.
+
+Use the same CSV output for download and for opening a file on the Mac.
+Protect cells that a spreadsheet could read as formulas.
+"""
 
 import csv
 import io
@@ -34,7 +38,10 @@ def safe_cell(value: str) -> str:
 
 
 def render_csv(table: ReviewedTable) -> tuple[bytes, str]:
-    """Return the UTF-8 CSV bytes and a file name with the current time."""
+    """Take the reviewed headings and rows and make UTF-8 CSV bytes.
+
+    Use the CSV writer for quotes and line breaks. Return a file name with the time.
+    """
     output = io.StringIO(newline="")
     writer = csv.writer(output, lineterminator="\r\n")
     for row in [table.headings, *table.rows]:

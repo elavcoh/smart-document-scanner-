@@ -1,4 +1,8 @@
-/** Main scanner flow from choosing a photo to reviewing and exporting records. */
+/**
+ * Run the main flow of the scanner app.
+ * Keep track of the current photo, the rows being checked, and saved documents.
+ * Send work to the API and show the right screen for each step.
+ */
 
 import { randomUUID } from 'expo-crypto';
 import * as ImagePicker from 'expo-image-picker';
@@ -28,12 +32,17 @@ function blankRow(width: number): DraftRow {
   return { id: randomUUID(), cells: Array(width).fill(''), source: '', warnings: [], manual: true, edited: [] };
 }
 
-/** Keep the current photo, draft, export, and history in one place. */
+/**
+ * Hold the state for the scanner screens.
+ * Keep the working draft, the checked export, and the saved rows apart.
+ * This lets the user edit a draft without changing a saved document.
+ */
 function Scanner() {
   const [screen, setScreen] = useState<Screen>('home');
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [original, setOriginal] = useState(false);
   const [previewFromReview, setPreviewFromReview] = useState(false);
+  // The draft changes during review. The checked table is what we send to export.
   const [draft, setDraft] = useState<Draft | null>(null);
   const [reviewed, setReviewed] = useState<ReviewedTable | null>(null);
   const [pending, setPending] = useState<ReviewedTable | null>(null);
@@ -41,6 +50,7 @@ function Scanner() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [busy, setBusy] = useState('');
   const [history, setHistory] = useState<SheetHistory | null>(null);
+  // Keep the saved document and the new edits as two sets of rows.
   const [editing, setEditing] = useState<SheetDocument | null>(null);
   const [editedRows, setEditedRows] = useState<string[][]>([]);
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | null>(null);
@@ -86,7 +96,10 @@ function Scanner() {
     }
   }
 
-  /** Prepare the selected photo and start a new preview. */
+  /**
+   * Take the photo picked by Android and prepare the working JPEG.
+   * After it is ready, clear the old draft and show the new photo.
+   */
   async function acceptPhoto(asset: ImagePicker.ImagePickerAsset) {
     const next = await preparePhoto(asset);
     setPhoto(next);
@@ -110,7 +123,10 @@ function Scanner() {
     }).catch(report);
   }, []);
 
-  /** Handle Android Back based on the current screen and draft. */
+  /**
+   * Handle the Android Back button while inside the scanner.
+   * Go back to the right screen without clearing the draft. Let Android handle Back on Home.
+   */
   function back() {
     if (running.current) return true;
     if (screen === 'home') return false;
@@ -164,7 +180,10 @@ function Scanner() {
     else start();
   }
 
-  /** Explain the local and Gemini options before starting OCR. */
+  /**
+   * Ask the user how to read the photo.
+   * Explain which choice sends it to Google and when a new result can replace a draft.
+   */
   function chooseExtraction() {
     const options = 'Use Gemini for print, handwriting, or both in Hebrew or English. This sends the photo to Google. For print only, you can process it on the Mac.';
     const message = draft ? `${options}\n\nSuccessful extraction replaces the current draft and its edits.` : options;
@@ -175,7 +194,10 @@ function Scanner() {
     ]);
   }
 
-  /** Send the photo for OCR and build an editable draft from the result. */
+  /**
+   * Send the working photo with the selected OCR mode.
+   * Turn missing cell values into empty input fields and keep the original text and warnings.
+   */
   function extract(mode: ExtractionMode) {
     if (!photo) return;
     void run('Extracting records', async () => {
@@ -231,7 +253,10 @@ function Scanner() {
     setDraft(current => current && change(current));
   }
 
-  /** Check the draft and take a copy for the export screen. */
+  /**
+   * Check the headings and rows before showing Export.
+   * Save the checked values in one table that both CSV and Google Sheets can use.
+   */
   function confirm() {
     if (!draft) return;
     Keyboard.dismiss();
@@ -284,7 +309,10 @@ function Scanner() {
       report(new Error('Chrome could not open the spreadsheet. Check that Chrome is installed and try again.')));
   }
 
-  /** Save the CSV in a chosen folder and read it back for preview. */
+  /**
+   * Ask Android for a folder and save the CSV there.
+   * Read the saved file back so the preview shows what was actually saved.
+   */
   function saveCsvToDevice(table: ReviewedTable) {
     Keyboard.dismiss();
     void run('Saving CSV', async () => {
@@ -335,7 +363,10 @@ function Scanner() {
     });
   }
 
-  /** Open the scanner's browser editor for the selected document. */
+  /**
+   * Open our browser editor using the saved document ID.
+   * The editor reads the same rows and saves through the same server as the app.
+   */
   function openWebEditor(documentId: string) {
     Keyboard.dismiss();
     void run('Opening browser editor', async () => {
@@ -343,7 +374,10 @@ function Scanner() {
     });
   }
 
-  /** Get the selected document's Sheets view and open its link. */
+  /**
+   * Ask for the Sheets link for the open document.
+   * The server can create its own tab that shows the rows for this document.
+   */
   function openHistorySheet() {
     if (!editing?.document_id) return;
     const documentId = editing.document_id;
@@ -390,7 +424,10 @@ function Scanner() {
     });
   }
 
-  /** Send the edit and update the document shown in the history list. */
+  /**
+   * Send the changed rows together with the rows we first loaded.
+   * When the server confirms the edit, replace that document in history.
+   */
   function saveDocument() {
     if (!editing?.document_id || !history) return;
     Keyboard.dismiss();
@@ -421,6 +458,7 @@ function Scanner() {
     ]);
   }
 
+  // Review sends back edits. The main screen keeps the draft and its column sizes.
   return (
     <SafeAreaView style={styles.screen}>
       <StatusBar barStyle="dark-content" />
